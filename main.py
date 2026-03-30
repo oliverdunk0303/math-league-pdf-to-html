@@ -94,11 +94,14 @@ def convert_number_sense(
         blank_lines = get_blank_lines(page, line_gap, min_width=min_line_width)
 
         # "dict" provides exact coordinates and font properties
+        if debug: click.echo(f"Processing page {page.number} data: {page.get_text('text')}")
         blocks = page.get_text("dict")["blocks"]
         all_lines = [l for b in blocks if "lines" in b for l in b["lines"]]
+        if debug: click.echo(f"Processing page {page.number} with {len(blocks)} blocks and {len(all_lines)} lines.")
         for i in range(len(all_lines)):
             l = all_lines[i]
-            if "spans" not in l or l["spans"][0]["text"].strip() != f"{problem_count}.":  # Check for the specific text
+            if debug: click.echo(f"Checking line {i}: {[s['text'] for s in l['spans']]}")
+            if "spans" not in l or l["spans"][0]["text"].strip() != f"{problem_count}.".strip():  # Check for the specific text
                 continue
             click.secho(f"--------------- \nFound problem {problem_count} on page {page.number}:", fg="white", bold=True)
             x_range, y_range = get_line_range(l)
